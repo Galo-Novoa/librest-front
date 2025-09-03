@@ -1,11 +1,17 @@
-import React from 'react';
+// src/App.tsx
+import { useEffect, useState } from "react";
 
-const App: React.FC = () => {
-    return (
-    <div className="min-h-screen flex items-center justify-center">
-        <h1 className="text-3xl font-bold">Mercado Web</h1>
-    </div>
-    );
-};
+function App() {
+	const [mensaje, setMensaje] = useState("");
+
+	useEffect(() => {
+		fetch("http://localhost:8080/hello")
+			.then((res) => res.text())
+			.then((data) => setMensaje(data))
+			.catch((err) => console.error(err));
+	}, []);
+
+	return <div>{mensaje}</div>;
+}
 
 export default App;
