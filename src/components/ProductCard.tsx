@@ -15,7 +15,7 @@ interface Props {
 const ProductoCard: React.FC<Props> = ({ producto }) => {
 	return (
 		<div className="grid grid-cols-2 gap-6">
-			<div className="border rounded-xl shadow p-4 flex items-center justify-between">
+			<div className="border rounded-xl shadow p-4 flex items-center justify-center">
 				<div className="flex flex-col justify-start flex-1">
 					<h2 className="text-lg font-bold mb-1">{producto.nombre}</h2>
 					<p className="text-gray-700 text-sm mb-1">{producto.descripcion}</p>
