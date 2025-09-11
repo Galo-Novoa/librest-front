@@ -1,36 +1,44 @@
 import { useEffect, useState } from "react";
-import ProductoCard from "./ProductCard";
-import AgregarProducto from "./AgregarProducto";
-import type { Producto } from "../types/Producto";
+import ProductCard from "./ProductCard";
+import AddProduct from "./AddProduct";
+import type { Product } from "../types/Product";
 
 function App() {
-  const [productos, setProductos] = useState<Producto[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/productos")
-      .then((res) => res.json())
-      .then((data: Producto[]) => setProductos(data))
-      .catch((err) => console.error(err));
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/products");
+        const data: Product[] = await res.json();
+        setProducts(data);
+      } catch (err) {
+        console.error("Error al cargar productos:", err);
+      }
+    };
+
+    fetchProducts();
   }, []);
 
-  const handleAgregar = (nuevoProducto: Producto) => {
-    setProductos((prev) => [...prev, nuevoProducto]);
+  const handleAdd = (newProduct: Product) => {
+    setProducts((prev) => [...prev, newProduct]);
   };
 
-  const handleEliminar = (id: number) => {
-    fetch(`http://localhost:8080/productos/${id}`, { method: "DELETE" })
-      .then(() => {
-        setProductos((prev) => prev.filter((p) => p.id !== id));
-      })
-      .catch((err) => console.error("Error al eliminar:", err));
+  const handleDelete = async (id: number) => {
+    try {
+      await fetch(`http://localhost:8080/products/${id}`, { method: "DELETE" });
+      setProducts((prev) => prev.filter((p) => p.id !== id));
+    } catch (err) {
+      console.error("Error al eliminar:", err);
+    }
   };
 
   return (
     <div className="p-4">
-      <AgregarProducto onAgregar={handleAgregar} />
+      <AddProduct onAdd={handleAdd} />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        {productos.map((p) => (
-          <ProductoCard key={p.id} producto={p} onEliminar={handleEliminar} />
+        {products.map((p) => (
+          <ProductCard key={p.id} product={p} onDelete={handleDelete} />
         ))}
       </div>
     </div>
