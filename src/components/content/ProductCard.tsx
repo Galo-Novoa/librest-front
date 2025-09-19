@@ -8,7 +8,7 @@ type Props = {
 
 const ProductCard: React.FC<Props> = ({ product, onDelete }) => {
 	return (
-		<div className="relative grid grid-cols-2 gap-6 border rounded-xl shadow p-4">
+		<div className="relative grid grid-cols-2 gap-6 border rounded-xl shadow p-4 bg-white">
 			<button
 				onClick={() => onDelete(product.id)}
 				className="absolute top-2 right-2 text-red-500 hover:text-red-700 text-xl"
