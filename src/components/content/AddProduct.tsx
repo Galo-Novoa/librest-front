@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import type { Product } from "../types/Product";
+import type { Product } from "../../types/Product";
 
 interface Props {
 	onAdd: (p: Product) => void;
