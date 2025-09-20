@@ -6,7 +6,7 @@ interface Props {
 	onAdd: (p: Product) => void;
 }
 
-const AddProduct: React.FC<Props> = ({ onAdd }) => {
+const AddForm: React.FC<Props> = ({ onAdd }) => {
 	const [name, setName] = useState("");
 	const [price, setPrice] = useState<number | "">("");
 	const [description, setDescription] = useState("");
@@ -67,9 +67,9 @@ const AddProduct: React.FC<Props> = ({ onAdd }) => {
 				value={image}
 				onChange={(e) => setImage(e.target.value)}
 			/>
-			<button type="submit">Agregar Producto</button>
+			<button type="submit">Añadir</button>
 		</form>
 	);
 };
 
-export default AddProduct;
+export default AddForm;
