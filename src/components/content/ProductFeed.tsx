@@ -33,7 +33,7 @@ function ProductFeed() {
 		}
 	};
 	return (
-		<main className="p-4 overflow-y-auto flex-1">
+		<main className="p-4 overflow-y-auto flex-1 relative">
 			<AddButton />
 			<div className="grid grid-cols-4 gap-4 mt-4">
 				{products.map((p) => (

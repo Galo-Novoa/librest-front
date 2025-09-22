@@ -20,7 +20,7 @@ const AddForm: React.FC<Props> = ({ onAdd }) => {
 		const newProduct = {
 			name,
 			price: Number(price),
-			descripcion: description,
+			description: description,
 			image,
 		};
 
@@ -43,11 +43,12 @@ const AddForm: React.FC<Props> = ({ onAdd }) => {
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className="flex flex-col gap-2">
+		<form onSubmit={handleSubmit} className="flex flex-col gap-2 bg-lime-300 rounded-xl p-4 mt-4 shadow-xl w-[40vw] justify-center text-xl absolute bottom-40 right-10">
 			<input
 				placeholder="Name"
 				value={name}
 				onChange={(e) => setName(e.target.value)}
+				className="bg-white rounded-lg p-2"
 			/>
 			<input
 				placeholder="Precio"
@@ -56,18 +57,21 @@ const AddForm: React.FC<Props> = ({ onAdd }) => {
 				onChange={(e) =>
 					setPrice(e.target.value === "" ? "" : Number(e.target.value))
 				}
+				className="bg-white rounded-lg p-2"
 			/>
-			<input
+			<textarea
 				placeholder="Descripción"
 				value={description}
 				onChange={(e) => setDescription(e.target.value)}
+				className="w-full h-40 p-4 rounded-lg resize-none bg-white"
 			/>
 			<input
 				placeholder="URL Imagen"
 				value={image}
 				onChange={(e) => setImage(e.target.value)}
+				className="bg-white rounded-lg p-2"
 			/>
-			<button type="submit">Añadir</button>
+			<button type="submit" className="rounded-2xl bg-lime-400 w-40 m-auto">Añadir</button>
 		</form>
 	);
 };
