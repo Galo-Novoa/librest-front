@@ -22,3 +22,18 @@ export async function deleteProduct(id: number): Promise<void> {
   const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
   if (!res.ok) throw new Error("Error al eliminar producto");
 }
+
+export async function updateProduct(
+  id: number,
+  updatedFields: Partial<Omit<Product, "id">>
+): Promise<Product> {
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updatedFields),
+  });
+
+  if (!res.ok) throw new Error("Error al actualizar producto");
+
+  return res.json();
+}

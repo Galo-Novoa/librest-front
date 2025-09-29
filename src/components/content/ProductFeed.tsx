@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import ProductCard from "./card/ProductCard";
 import AddButton from "./AddButton";
 import type { Product } from "../../types/Product";
-import { getProducts, addProduct, deleteProduct } from "../../services/products";
+import { getProducts, addProduct, deleteProduct, updateProduct } from "../../services/products";
 
 function ProductFeed() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -29,25 +29,16 @@ function ProductFeed() {
     }
   };
 
-  const handleUpdate = async (id: number, field: keyof Product, value: string) => {
-    try {
-      const res = await fetch(`http://localhost:8080/products/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ [field]: value }),
-      });
-
-      if (!res.ok) throw new Error("Error al actualizar el producto");
-
-      const updated = await res.json();
-
-      setProducts((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, ...updated } : p))
-      );
-    } catch (err) {
-      console.error(err);
-    }
-  };
+	const handleUpdate = async (id: number, field: keyof Product, value: string) => {
+		try {
+			const updated = await updateProduct(id, { [field]: value });
+			setProducts((prev) =>
+				prev.map((p) => (p.id === id ? { ...p, ...updated } : p))
+			);
+		} catch (err) {
+			console.error(err);
+		}
+	};
 
   return (
     <main className="p-4 overflow-y-auto flex-1 relative">

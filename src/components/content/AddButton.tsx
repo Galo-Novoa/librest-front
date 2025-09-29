@@ -27,7 +27,7 @@ function AddButton({ onAdd }: Readonly<Props>) {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="absolute bottom-36 right-10"
+            className="absolute bottom-0 right-0 z-50"
           >
             <AddForm onAdd={onAdd} />
           </motion.div>
