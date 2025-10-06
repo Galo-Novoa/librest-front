@@ -3,7 +3,7 @@ import type { Product } from "../../../types/Product";
 import EditableField from "./EditableField";
 
 type Props = {
-  product: Product;
+  product: Product & { _ts?: number };
   onDelete: (id: number) => void;
   onUpdate: (id: number, field: keyof Product, value: string) => void;
 };

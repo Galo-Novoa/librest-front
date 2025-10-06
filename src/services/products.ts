@@ -32,8 +32,6 @@ export async function updateProduct(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(updatedFields),
   });
-
   if (!res.ok) throw new Error("Error al actualizar producto");
-
   return res.json();
 }
