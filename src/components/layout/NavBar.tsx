@@ -1,9 +1,11 @@
-import ProfileMenu from "./NavBar/ProfileMenu";
+import ProfileMenu from "./NavBar/ProfileIcon";
 import SearchBar from "./NavBar/SearchBar";
+import CartIcon from "./NavBar/CartIcon";
+import { useCart } from "../../hooks/useCart";
 
 function NavBar() {
+  const { cart } = useCart();
   const handleSearch = (query: string) => {
-    // Aquí puedes implementar la lógica de búsqueda si la necesitas en el NavBar
     console.log("Buscando:", query);
   };
 
@@ -18,8 +20,8 @@ function NavBar() {
         <div className="ml-4 flex-1 max-w-[50%]">
           <SearchBar onSearch={handleSearch} />
         </div>
-
         <div className="ml-auto flex items-center">
+          <CartIcon count={cart.length} onClick={() => alert("Ver carrito")} />
           <ProfileMenu avatarUrl="/user.jpg" onLogout={() => {}} />
         </div>
       </div>

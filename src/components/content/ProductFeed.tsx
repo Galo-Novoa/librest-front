@@ -8,6 +8,7 @@ import { useToast } from "../../hooks/useToast";
 import { AlertCircle, Search } from "lucide-react";
 import { useState } from "react";
 import type { Product } from "../../types/Product";
+import { useCart } from "../../hooks/useCart";
 
 export default function ProductFeed() {
 	const {
@@ -19,6 +20,8 @@ export default function ProductFeed() {
 		updateExistingProduct,
 		retry,
 	} = useProducts();
+
+  const { cart, addToCart } = useCart();
 
 	const { toast, showToast, hideToast } = useToast();
 	const [searchTerm, setSearchTerm] = useState("");
@@ -123,14 +126,15 @@ export default function ProductFeed() {
 					</div>
 				) : (
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
-						{filteredProducts.map((p) => (
+            {filteredProducts.map(p => (
               <ProductCard
                 key={p.id}
                 product={p}
                 onDelete={handleDelete}
                 onUpdate={handleUpdate}
+                onAddToCart={addToCart}
               />
-						))}
+            ))}
 					</div>
 				)}
 			</main>

@@ -13,6 +13,7 @@ type Props = {
   product: Product & { _ts?: number };
   onDelete: (id: number) => void;
   onUpdate: (id: number, updatedFields: Partial<Product>) => void;
+  onAddToCart: (product: Product) => void;
 };
 
 type EditValues = {
@@ -108,6 +109,15 @@ const handleSave = async () => {
       >
         {isEditing ? <CancelIcon size={16} /> : <Edit2 size={16} />}
       </button>
+
+      {!isEditing && (
+        <button
+          onClick={() => onAddToCart(product)}
+          className="mt-2 bg-lime-500 text-white px-4 py-1 rounded hover:bg-lime-600 transition-colors font-semibold"
+        >
+          Añadir al carrito
+        </button>
+      )}
 
       <div className="w-full h-48 mb-4 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
         {imageError ? (
