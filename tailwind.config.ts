@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 import aspectRatio from "@tailwindcss/aspect-ratio";
+import scrollbarHide from "tailwind-scrollbar-hide";
 
 const config: Config = {
   content: [
@@ -11,6 +12,7 @@ const config: Config = {
   },
   plugins: [
     aspectRatio,
+    scrollbarHide
   ],
 };
 

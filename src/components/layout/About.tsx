@@ -1,14 +1,12 @@
 function About() {
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">About This App</h1>
-      <p className="mb-2">
-        This is a simple product management application built with React and
-        TypeScript.
+      <h2 className="text-lg font-bold mb-2 text-gray-800">Sobre Mercado Librest</h2>
+      <p className="mb-2 text-gray-700">
+        Aplicación de gestión de productos desarrollada con React, TypeScript y Tailwind CSS.
       </p>
-      <p>
-        You can add, view, and delete products. The app demonstrates basic CRUD
-        operations and state management.
+      <p className="text-gray-600 text-xs">
+        Puedes agregar, editar y eliminar productos de manera intuitiva.
       </p>
     </div>
   );
