@@ -61,7 +61,7 @@ function AddButton({ onAdd }: Readonly<Props>) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.3 }}
-            className="fixed bottom-0 right-0 z-50"
+            className="fixed bottom-10 right-10 z-50 w-96 p-4"
           >
             <AddForm onAdd={handleAdd} onClose={handleClose} />
           </motion.div>

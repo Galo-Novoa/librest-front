@@ -62,10 +62,10 @@ export function useProducts() {
     }
   };
 
-  const updateExistingProduct = async (id: number, field: keyof Product, value: string) => {
+  const updateExistingProduct = async (id: number, updatedFields: Partial<Product>) => {
     try {
-      const updated = await productAPI.updateProduct(id, { [field]: value });
-      setProducts((prev) => 
+      const updated = await productAPI.updateProduct(id, updatedFields);
+      setProducts((prev) =>
         prev.map((p) => (p.id === id ? { ...p, ...updated, _ts: Date.now() } : p))
       );
       return updated;
