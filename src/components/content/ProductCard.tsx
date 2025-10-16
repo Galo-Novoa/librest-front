@@ -14,7 +14,7 @@ type Props = {
 	product: Product & { _ts?: number };
 	onDelete: (id: number) => void;
 	onUpdate: (id: number, updatedFields: Partial<Product>) => void;
-	onAddToCart: (product: Product) => void;
+	onAddToCart: (productId: number) => void; // ← Recibe productId
 };
 
 type EditValues = {
@@ -24,7 +24,7 @@ type EditValues = {
 	image: string | File;
 };
 
-const ProductCard: React.FC<Props> = ({ product, onDelete, onUpdate }) => {
+const ProductCard: React.FC<Props> = ({ product, onDelete, onUpdate, onAddToCart }) => { // ← Agregar onAddToCart aquí
 	const [imageError, setImageError] = useState(false);
 	const [isHovered, setIsHovered] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
@@ -45,7 +45,7 @@ const ProductCard: React.FC<Props> = ({ product, onDelete, onUpdate }) => {
 	};
 
 	const handleSave = async () => {
-		const numericPrice = parseFloat(editValues.price.replace(/[$\s]/g, "")) || 0;
+		const numericPrice = Number.parseFloat(editValues.price.replace(/[$\s]/g, "")) || 0; // ← Corregido
 		let imageUrl = product.image || "";
 
 		if (editValues.image instanceof File) {
@@ -111,12 +111,13 @@ const ProductCard: React.FC<Props> = ({ product, onDelete, onUpdate }) => {
 					aria-label="Añadir al carrito"
 					title="Añadir al carrito"
 					style={{ transitionProperty: "opacity, transform" }}
+					onClick={() => onAddToCart(product.id)} // ← Usar onAddToCart
 				>
 					<ShoppingCart size={24} />
 				</button>
 			)}
 
-			{/* Contenedor de dos columnas */}
+			{/* Resto del código igual... */}
 			<div className="flex w-full gap-4">
 				{/* Columna izquierda: imagen */}
 				<div className="w-1/2 h-48 w-60 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">

@@ -1,46 +1,41 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { ShoppingCart, Trash2, Plus, Minus, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom'; // ← Remover React import innecesario
+import { ShoppingCart, Trash2, Plus, Minus, ArrowLeft, Loader2 } from 'lucide-react';
 import { useCart } from '../../hooks/useCart';
-import type { Product } from '../../types/Product';
+import ErrorMessage from '../ui/ErrorMessage';
 
 export default function CartPage() {
-  const { cart, removeFromCart, clearCart, totalPrice } = useCart();
-
-  // Agrupar productos duplicados con cantidad
-  const cartItems = cart.reduce((acc, product) => {
-    const existing = acc.find(item => item.product.id === product.id);
-    if (existing) {
-      existing.quantity += 1;
-    } else {
-      acc.push({ product, quantity: 1 });
-    }
-    return acc;
-  }, [] as { product: Product; quantity: number }[]);
-
-  const updateQuantity = (productId: number, newQuantity: number) => {
-    if (newQuantity <= 0) {
-      removeFromCart(productId);
-    } else {
-      // Para simplificar, removemos y agregamos de nuevo
-      // En una implementación real, tendrías un método updateQuantity en useCart
-      const currentItem = cartItems.find(item => item.product.id === productId);
-      if (currentItem) {
-        removeFromCart(productId);
-        // Agregar la cantidad correcta
-        for (let i = 0; i < newQuantity; i++) {
-          // En una implementación real, esto sería una llamada al backend
-        }
-      }
-    }
-  };
+  const { 
+    cart, 
+    loading, 
+    error, 
+    removeFromCart, 
+    updateQuantity, 
+    clearCart, 
+    totalPrice,
+    retry 
+  } = useCart();
 
   const handleCheckout = () => {
     alert('¡Funcionalidad de checkout en desarrollo!');
-    // clearCart(); // Descomentar cuando esté listo
   };
 
-  if (cartItems.length === 0) {
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <Loader2 className="animate-spin text-lime-600" size={48} />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6">
+        <ErrorMessage message={error} onRetry={retry} />
+      </div>
+    );
+  }
+
+  if (cart.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-96 bg-lime-50 rounded-lg p-8">
         <ShoppingCart size={64} className="text-gray-400 mb-4" />
@@ -71,6 +66,7 @@ export default function CartPage() {
         <button
           onClick={clearCart}
           className="text-red-500 hover:text-red-700 transition-colors flex items-center gap-1"
+          disabled={loading}
         >
           <Trash2 size={20} />
           Vaciar carrito
@@ -78,34 +74,39 @@ export default function CartPage() {
       </div>
 
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        {cartItems.map(({ product, quantity }) => (
-          <div key={product.id} className="border-b border-gray-200 last:border-b-0">
+        {cart.map((item) => (
+          <div key={item.id} className="border-b border-gray-200 last:border-b-0">
             <div className="flex items-center p-4">
               <img
-                src={product.image}
-                alt={product.name}
+                src={item.product.image}
+                alt={item.product.name}
                 className="w-20 h-20 object-cover rounded-lg mr-4"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/placeholder-image.jpg';
+                }}
               />
               
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
-                <p className="text-gray-600 text-sm line-clamp-2">{product.description}</p>
+                <h3 className="text-lg font-semibold text-gray-800">{item.product.name}</h3>
+                <p className="text-gray-600 text-sm line-clamp-2">{item.product.description}</p>
                 <p className="text-xl font-bold text-lime-600 mt-1">
-                  ${new Intl.NumberFormat("es-AR").format(Number(product.price))}
+                  ${new Intl.NumberFormat("es-AR").format(Number(item.product.price))}
                 </p>
               </div>
 
               <div className="flex items-center gap-3 mr-4">
                 <button
-                  onClick={() => updateQuantity(product.id, quantity - 1)}
-                  className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors"
+                  onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                  disabled={loading}
+                  className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors disabled:opacity-50"
                 >
                   <Minus size={16} />
                 </button>
-                <span className="text-lg font-semibold w-8 text-center">{quantity}</span>
+                <span className="text-lg font-semibold w-8 text-center">{item.quantity}</span>
                 <button
-                  onClick={() => updateQuantity(product.id, quantity + 1)}
-                  className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors"
+                  onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                  disabled={loading}
+                  className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors disabled:opacity-50"
                 >
                   <Plus size={16} />
                 </button>
@@ -113,11 +114,12 @@ export default function CartPage() {
 
               <div className="text-right">
                 <p className="text-lg font-bold text-gray-800">
-                  ${new Intl.NumberFormat("es-AR").format(Number(product.price) * quantity)}
+                  ${new Intl.NumberFormat("es-AR").format(Number(item.product.price) * item.quantity)}
                 </p>
                 <button
-                  onClick={() => removeFromCart(product.id)}
-                  className="text-red-500 hover:text-red-700 transition-colors mt-2 flex items-center gap-1 text-sm"
+                  onClick={() => removeFromCart(item.product.id)}
+                  disabled={loading}
+                  className="text-red-500 hover:text-red-700 transition-colors mt-2 flex items-center gap-1 text-sm disabled:opacity-50"
                 >
                   <Trash2 size={16} />
                   Eliminar
@@ -145,7 +147,8 @@ export default function CartPage() {
           </Link>
           <button
             onClick={handleCheckout}
-            className="flex-1 bg-lime-500 text-white py-3 px-6 rounded-lg hover:bg-lime-600 transition-colors font-semibold"
+            disabled={loading}
+            className="flex-1 bg-lime-500 text-white py-3 px-6 rounded-lg hover:bg-lime-600 transition-colors font-semibold disabled:opacity-50"
           >
             Finalizar compra
           </button>

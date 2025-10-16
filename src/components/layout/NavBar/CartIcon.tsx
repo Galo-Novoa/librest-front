@@ -1,17 +1,26 @@
 import { ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useCart } from '../../../hooks/useCart';
 
-type Props = {
-  count: number;
-};
+function CartIcon() {
+  const { cartItemCount, loading } = useCart();
 
-function CartIcon({ count }: Props) {
   return (
-    <Link to="/cart" className="relative">
-      <ShoppingCart size={45} strokeWidth={3} className="text-white hover:text-lime-200 transition-colors" />
-      {count > 0 && (
+    <Link 
+      to="/cart" 
+      className="relative"
+      aria-label={`Carrito de compras con ${cartItemCount} items`}
+    >
+      <ShoppingCart 
+        size={45} 
+        strokeWidth={3} 
+        className={`text-white hover:text-lime-200 transition-colors ${
+          loading ? 'opacity-50' : ''
+        }`}
+      />
+      {cartItemCount > 0 && (
         <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
-          {count}
+          {cartItemCount}
         </span>
       )}
     </Link>

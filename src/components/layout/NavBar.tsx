@@ -1,11 +1,9 @@
 import ProfileMenu from "./NavBar/ProfileIcon";
 import CartIcon from "./NavBar/CartIcon";
-import { useCart } from "../../hooks/useCart";
 import SearchBar from "./NavBar/SearchBar";
 
-export default function NavBar({ term, setTerm }: { term: string; setTerm: (value: string) => void }) {
-  const { cartItemCount } = useCart();
-
+// Asegúrate de que solo reciba setTerm, no term
+export default function NavBar({ setTerm }: { setTerm: (value: string) => void }) {
   return (
     <nav className="text-white font-bold whitespace-nowrap">
       <div className="bg-lime-400 flex items-center h-16 pr-4">
@@ -14,10 +12,10 @@ export default function NavBar({ term, setTerm }: { term: string; setTerm: (valu
           <h1 className="text-5xl">MERCADO LIBREST</h1>
         </div>
         <div className="flex-1 ml-4">
-          <SearchBar onSearch={(value) => setTerm(typeof value === "function" ? value(term) : value)} />
+          <SearchBar onSearch={setTerm} />
         </div>
         <div className="ml-auto flex items-center space-x-5">
-          <CartIcon count={cartItemCount} />
+          <CartIcon />
           <ProfileMenu avatarUrl="/user.jpg" onLogout={() => {}} />
         </div>
       </div>

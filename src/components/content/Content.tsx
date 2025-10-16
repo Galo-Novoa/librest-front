@@ -21,7 +21,7 @@ export default function Content({
 		loading,
 		error,
 	} = useProducts();
-	const { addToCart } = useCart();
+	const { addToCart } = useCart(); // ← Esto ahora recibe productId
 	const { toast, showToast, hideToast } = useToast();
 
 	const handleAdd = async (newProduct: Omit<Product, "id">) => {
@@ -34,7 +34,7 @@ export default function Content({
 	};
 
 	const handleDelete = async (id: number) => {
-		if (!window.confirm("¿Seguro que deseas eliminar este producto?")) return;
+		if (!globalThis.confirm("¿Seguro que deseas eliminar este producto?")) return;
 		try {
 			await deleteExistingProduct(id);
 			showToast("Producto eliminado", "info");
@@ -49,6 +49,16 @@ export default function Content({
 			showToast("Producto actualizado", "success");
 		} catch {
 			showToast("Error al actualizar el producto", "error");
+		}
+	};
+
+	// CORREGIDO: Ahora recibe productId en lugar de Product
+	const handleAddToCart = async (productId: number) => {
+		try {
+			await addToCart(productId);
+			showToast('Producto agregado al carrito', 'success');
+		} catch {
+			showToast('Error al agregar al carrito', 'error');
 		}
 	};
 
@@ -78,7 +88,7 @@ export default function Content({
 								product={p}
 								onDelete={handleDelete}
 								onUpdate={handleUpdate}
-								onAddToCart={addToCart}
+								onAddToCart={handleAddToCart} // ← Ahora pasa productId
 							/>
 						))}
 					</div>
