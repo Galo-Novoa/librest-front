@@ -16,7 +16,7 @@ export default function NavBar({ term, setTerm }: { term: string; setTerm: (valu
         <div className="flex-1 ml-4">
           <SearchBar onSearch={(value) => setTerm(typeof value === "function" ? value(term) : value)} />
         </div>
-        <div className="ml-auto flex items-center space-x-2">
+        <div className="ml-auto flex items-center space-x-5">
           <CartIcon count={cart.length} onClick={() => alert("Ver carrito")} />
           <ProfileMenu avatarUrl="/user.jpg" onLogout={() => {}} />
         </div>
