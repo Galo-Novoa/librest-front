@@ -1,13 +1,10 @@
 import ProfileMenu from "./NavBar/ProfileIcon";
-import SearchBar from "./NavBar/SearchBar";
 import CartIcon from "./NavBar/CartIcon";
 import { useCart } from "../../hooks/useCart";
+import SearchBar from "./NavBar/SearchBar";
 
-function NavBar() {
+export default function NavBar({ term, setTerm }: { term: string; setTerm: (value: string) => void }) {
   const { cart } = useCart();
-  const handleSearch = (query: string) => {
-    console.log("Buscando:", query);
-  };
 
   return (
     <nav className="text-white font-bold whitespace-nowrap">
@@ -16,11 +13,10 @@ function NavBar() {
           <img src="/icon.png" alt="[Icono]" className="w-12 h-12" />
           <h1 className="text-5xl">MERCADO LIBREST</h1>
         </div>
-
-        <div className="ml-4 flex-1 max-w-[50%]">
-          <SearchBar onSearch={handleSearch} />
+        <div className="flex-1 ml-4">
+          <SearchBar onSearch={(value) => setTerm(typeof value === "function" ? value(term) : value)} />
         </div>
-        <div className="ml-auto flex items-center">
+        <div className="ml-auto flex items-center space-x-2">
           <CartIcon count={cart.length} onClick={() => alert("Ver carrito")} />
           <ProfileMenu avatarUrl="/user.jpg" onLogout={() => {}} />
         </div>
@@ -36,5 +32,3 @@ function NavBar() {
     </nav>
   );
 }
-
-export default NavBar;

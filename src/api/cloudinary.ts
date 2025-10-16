@@ -1,5 +1,4 @@
 export async function uploadImage(file: File): Promise<string> {
-  // Pedimos la firma al backend
   const sigRes = await fetch("http://localhost:8080/cloudinary/signature");
   const { signature, timestamp, apiKey, cloudName } = await sigRes.json();
 

@@ -1,61 +1,31 @@
-import { Search, X } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import { Search } from "lucide-react";
+import { useState } from "react";
 
-export default function SearchBar({ onSearch }: Readonly<{ onSearch: (q: string) => void }>) {
-  const [query, setQuery] = useState("");
+type Props = {
+  onSearch: Dispatch<SetStateAction<string>>;
+};
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    onSearch(query);
-  };
+export default function SearchBar({ onSearch }: Props) {
 
-  const handleClear = () => {
-    setQuery("");
-    onSearch("");
-  };
+    const [inputValue, setInputValue] = useState("");
 
-  const handleChange = (value: string) => {
-    setQuery(value);
-    // Búsqueda en tiempo real
-    onSearch(value);
-  };
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      onSearch(inputValue.trim());
+    };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex items-center rounded-2xl w-full bg-white shadow-sm hover:shadow-md transition-shadow"
-    >
-      <div className="pl-4 text-lime-600">
-        <Search size={24} strokeWidth={2.5} />
-      </div>
-      
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => handleChange(e.target.value)}
-        placeholder="Buscar productos..."
-        className="px-4 py-4 h-full w-full outline-none placeholder-lime-600 text-black bg-transparent"
-        aria-label="Buscar productos"
-      />
-      
-      {query && (
-        <button
-          type="button"
-          onClick={handleClear}
-          className="px-3 text-gray-400 hover:text-gray-600 transition-colors"
-          aria-label="Limpiar búsqueda"
-        >
-          <X size={20} />
-        </button>
-      )}
-      
-      <button 
-        type="submit" 
-        className="rounded-r-2xl text-white py-2 px-5 bg-lime-500 hover:bg-lime-600 transition-colors"
-        aria-label="Buscar"
-      >
-        <Search size={24} strokeWidth={3} />
-      </button>
+    <form onSubmit={handleSubmit} className="flex items-center">
+    <input
+      type="text"
+      placeholder="Buscar productos por nombre o descripción..."
+      onChange={(e) => setInputValue(e.target.value)}
+      className="px-4 py-3 w-[45vw] rounded-l-2xl h-12 outline-none placeholder-lime-600 bg-transparent focus:outline-none focus:ring focus:ring-lime-400 bg-white placeholder:text-xl text-black"
+    />
+    <button type="submit" className="rounded-r-2xl h-12 text-lime-600 py-2 px-4 bg-lime-100 hover:bg-lime-200 hover:text-lime-700 transition flex items-center">
+        <Search size={35} strokeWidth={3} />
+    </button>
     </form>
   );
 }
