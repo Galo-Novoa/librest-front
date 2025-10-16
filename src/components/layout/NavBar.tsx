@@ -4,7 +4,7 @@ import { useCart } from "../../hooks/useCart";
 import SearchBar from "./NavBar/SearchBar";
 
 export default function NavBar({ term, setTerm }: { term: string; setTerm: (value: string) => void }) {
-  const { cart } = useCart();
+  const { cartItemCount } = useCart();
 
   return (
     <nav className="text-white font-bold whitespace-nowrap">
@@ -17,7 +17,7 @@ export default function NavBar({ term, setTerm }: { term: string; setTerm: (valu
           <SearchBar onSearch={(value) => setTerm(typeof value === "function" ? value(term) : value)} />
         </div>
         <div className="ml-auto flex items-center space-x-5">
-          <CartIcon count={cart.length} onClick={() => alert("Ver carrito")} />
+          <CartIcon count={cartItemCount} />
           <ProfileMenu avatarUrl="/user.jpg" onLogout={() => {}} />
         </div>
       </div>

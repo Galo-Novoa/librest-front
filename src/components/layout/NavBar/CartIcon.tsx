@@ -1,20 +1,20 @@
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 type Props = {
   count: number;
-  onClick: () => void;
 };
 
-function CartIcon({ count, onClick }: Props) {
+function CartIcon({ count }: Props) {
   return (
-    <button onClick={onClick} className="relative">
-      <ShoppingCart size={45} strokeWidth={3} />
+    <Link to="/cart" className="relative">
+      <ShoppingCart size={45} strokeWidth={3} className="text-white hover:text-lime-200 transition-colors" />
       {count > 0 && (
-        <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-1 text-xs">
+        <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
           {count}
         </span>
       )}
-    </button>
+    </Link>
   );
 }
 
