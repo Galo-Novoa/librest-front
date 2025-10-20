@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import type { Product } from "../../types/Product";
 import { addNewProduct } from "../../services/productHandlers";
 import { useFormValidation } from "../../hooks/useFormValidation";
+import { useCategories } from "../../hooks/useCategories";
 import { Loader2 } from "lucide-react";
 
 type Props = Readonly<{
@@ -14,9 +15,12 @@ export default function AddForm({ onAdd, onClose }: Props) {
   const [price, setPrice] = useState<number | "">("");
   const [description, setDescription] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [sale, setSale] = useState<number>(0);
+  const [categoryId, setCategoryId] = useState<number | "">("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const { errors, validateProduct, clearErrors } = useFormValidation();
+  const { categories, loading: categoriesLoading } = useCategories();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -27,20 +31,38 @@ export default function AddForm({ onAdd, onClose }: Props) {
 
     setIsSubmitting(true);
     try {
-      const newProduct = await addNewProduct({
+      const payload = {
         name: name.trim(),
         price: Number(price),
         description: description.trim(),
         imageFile,
-      });
+      };
 
-      onAdd(newProduct);
+      // Send only the fields the API accepts
+      const created = await addNewProduct(payload);
+
+      // Merge additional client-side fields into the returned product
+      const createdWithExtras = {
+        ...created,
+        rating: 0, // ← VALOR POR DEFECTO, no elegido por el usuario
+        publisher: "admin", // ← VALOR FIJO, no elegido por el usuario
+        sale,
+        categoryId: categoryId ? Number(categoryId) : undefined,
+      };
+
+      // Remove id before calling onAdd since onAdd expects Omit<Product, "id">
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id, ...productWithoutId } = createdWithExtras;
+
+      onAdd(productWithoutId);
       
       // Reset form
       setName("");
       setPrice("");
       setDescription("");
       setImageFile(null);
+      setSale(0);
+      setCategoryId("");
       clearErrors();
       
       if (onClose) onClose();
@@ -70,9 +92,7 @@ export default function AddForm({ onAdd, onClose }: Props) {
           aria-required="true"
           aria-invalid={!!errors.name}
         />
-        {errors.name && (
-          <p className="text-red-600 text-sm mt-1 font-medium">{errors.name}</p>
-        )}
+        {errors.name && <p className="text-red-600 text-sm mt-1 font-medium">{errors.name}</p>}
       </div>
 
       <div>
@@ -88,9 +108,7 @@ export default function AddForm({ onAdd, onClose }: Props) {
           aria-required="true"
           aria-invalid={!!errors.price}
         />
-        {errors.price && (
-          <p className="text-red-600 text-sm mt-1 font-medium">{errors.price}</p>
-        )}
+        {errors.price && <p className="text-red-600 text-sm mt-1 font-medium">{errors.price}</p>}
       </div>
 
       <div>
@@ -98,23 +116,48 @@ export default function AddForm({ onAdd, onClose }: Props) {
           placeholder="Descripción del producto"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className={`w-full h-40 p-4 rounded-lg resize-none bg-white ${errors.description ? "border-2 border-red-500" : ""}`}
+          className={`w-full h-32 p-4 rounded-lg resize-none bg-white ${errors.description ? "border-2 border-red-500" : ""}`}
           disabled={isSubmitting}
           aria-label="Descripción del producto"
           aria-required="true"
           aria-invalid={!!errors.description}
         />
         <div className="flex justify-between items-center">
-          <p className="text-sm text-gray-700 mt-1">
-            {description.length}/500 caracteres
-          </p>
-          {description.length >= 10 && (
-            <span className="text-green-600 text-sm">✓</span>
-          )}
+          <p className="text-sm text-gray-700 mt-1">{description.length}/500 caracteres</p>
+          {description.length >= 10 && <span className="text-green-600 text-sm">✓</span>}
         </div>
-        {errors.description && (
-          <p className="text-red-600 text-sm mt-1 font-medium">{errors.description}</p>
-        )}
+        {errors.description && <p className="text-red-600 text-sm mt-1 font-medium">{errors.description}</p>}
+      </div>
+
+      {/* Solo campo de descuento - rating y publisher removidos */}
+      <div>
+        <label htmlFor="productSale" className="block text-sm font-medium text-gray-700 mb-1">Descuento (%)</label>
+        <input
+          type="number"
+          min="0"
+          max="100"
+          value={sale}
+          onChange={(e) => setSale(Number(e.target.value))}
+          className="bg-white rounded-lg p-2 w-full"
+          disabled={isSubmitting}
+        />
+      </div>
+
+      <div>
+        <label htmlFor="productCategory" className="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
+        <select
+          value={categoryId}
+          onChange={(e) => setCategoryId(e.target.value === "" ? "" : Number(e.target.value))}
+          className="bg-white rounded-lg p-2 w-full"
+          disabled={isSubmitting || categoriesLoading}
+        >
+          <option value="">Seleccionar categoría</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div>
@@ -130,9 +173,7 @@ export default function AddForm({ onAdd, onClose }: Props) {
           aria-label="Seleccionar imagen"
         />
         {imageFile && (
-          <p className="text-sm text-green-600 mt-1">
-            ✓ Archivo seleccionado: {imageFile.name}
-          </p>
+          <p className="text-sm text-green-600 mt-1">✓ Archivo seleccionado: {imageFile.name}</p>
         )}
       </div>
 

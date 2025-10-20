@@ -8,7 +8,7 @@ export async function getProducts(): Promise<Product[]> {
   return res.json();
 }
 
-export async function addProduct(product: Omit<Product, "id">): Promise<Product> {
+export async function addProduct(product: Omit<Product, "id"> & { categoryId?: number }): Promise<Product> {
   const res = await fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -25,7 +25,7 @@ export async function deleteProduct(id: number): Promise<void> {
 
 export async function updateProduct(
   id: number,
-  updatedFields: Partial<Omit<Product, "id">>
+  updatedFields: Partial<Omit<Product, "id">> & { categoryId?: number }
 ): Promise<Product> {
   const res = await fetch(`${API_URL}/${id}`, {
     method: "PATCH",

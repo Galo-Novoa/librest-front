@@ -13,7 +13,7 @@ export default function App() {
   return (
     <div className="flex flex-col h-screen bg-lime-100 overflow-y-auto">
       <NavBar setTerm={setTerm} /> {/* ← REMOVER 'term' */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1">
         <Routes>
           <Route 
             path="/" 
