@@ -16,3 +16,12 @@ export interface Category {
   name: string;
   description: string;
 }
+
+export interface Review {
+  id: number;
+  productId: number;
+  userName: string;
+  rating: number;
+  comment: string;
+  date: string;
+}

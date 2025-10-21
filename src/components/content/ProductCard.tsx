@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { Product } from "../../types/Product";
 import {
   AlertCircle,
@@ -29,6 +30,7 @@ type EditValues = {
 };
 
 const ProductCard: React.FC<Props> = ({ product, onDelete, onUpdate, onAddToCart }) => {
+  const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -37,14 +39,22 @@ const ProductCard: React.FC<Props> = ({ product, onDelete, onUpdate, onAddToCart
   const [editValues, setEditValues] = useState<EditValues>({
     name: product.name || "",
     description: product.description || "",
-    price: (product.price?.toString() || "0"), // ← CORREGIDO
+    price: (product.price?.toString() || "0"),
     image: product.image || "",
-    rating: (product.rating?.toString() || "0"), // ← CORREGIDO
+    rating: (product.rating?.toString() || "0"),
     publisher: product.publisher || "admin",
-    sale: (product.sale?.toString() || "0"), // ← CORREGIDO
+    sale: (product.sale?.toString() || "0"),
   });
   
   const [previewImage, setPreviewImage] = useState<string>(product.image || "");
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Prevenir la navegación si se hizo clic en un botón
+    if ((e.target as HTMLElement).closest('button')) {
+      return;
+    }
+    navigate(`/product/${product.id}`);
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -139,10 +149,14 @@ const ProductCard: React.FC<Props> = ({ product, onDelete, onUpdate, onAddToCart
       onMouseLeave={() => setIsHovered(false)}
       onFocus={() => setIsHovered(true)}
       onBlur={() => setIsHovered(false)}
+      onClick={handleCardClick} // ← NUEVO: Manejar clic en toda la card
     >
       {/* Botones flotantes */}
       <button
-        onClick={() => onDelete(product.id)}
+        onClick={(e) => {
+          e.stopPropagation(); // ← IMPORTANTE: Prevenir que el clic se propague al card
+          onDelete(product.id);
+        }}
         className={`w-12 h-12 flex items-center justify-center absolute top-2 right-2 bg-red-500 text-white rounded-full transition-all duration-300 z-10 hover:bg-red-600 ${
           isHovered ? "opacity-100 scale-100" : "opacity-0 scale-90"
         }`}
@@ -153,7 +167,10 @@ const ProductCard: React.FC<Props> = ({ product, onDelete, onUpdate, onAddToCart
       </button>
 
       <button
-        onClick={() => setIsEditing(!isEditing)}
+        onClick={(e) => {
+          e.stopPropagation(); // ← IMPORTANTE: Prevenir que el clic se propague al card
+          setIsEditing(!isEditing);
+        }}
         className={`w-12 h-12 flex items-center justify-center absolute top-15 right-2 bg-blue-500 text-white rounded-full transition-all duration-300 z-10 hover:bg-blue-600 ${
           isHovered ? "opacity-100 scale-100" : "opacity-0 scale-90"
         }`}
@@ -171,7 +188,10 @@ const ProductCard: React.FC<Props> = ({ product, onDelete, onUpdate, onAddToCart
           aria-label="Añadir al carrito"
           title="Añadir al carrito"
           style={{ transitionProperty: "opacity, transform" }}
-          onClick={() => onAddToCart(product.id)}
+          onClick={(e) => {
+            e.stopPropagation(); // ← IMPORTANTE: Prevenir que el clic se propague al card
+            onAddToCart(product.id);
+          }}
         >
           <ShoppingCart size={24} />
         </button>
@@ -200,6 +220,7 @@ const ProductCard: React.FC<Props> = ({ product, onDelete, onUpdate, onAddToCart
               accept="image/*"
               onChange={handleFileChange}
               className="absolute bottom-2 left-2"
+              onClick={(e) => e.stopPropagation()} // ← Prevenir navegación al seleccionar archivo
             />
           )}
         </div>
@@ -212,11 +233,13 @@ const ProductCard: React.FC<Props> = ({ product, onDelete, onUpdate, onAddToCart
                 value={editValues.name}
                 onChange={(e) => setEditValues({ ...editValues, name: e.target.value })}
                 className="text-lg font-bold text-gray-800 border-b border-gray-300 focus:outline-none focus:ring-1 focus:ring-lime-500"
+                onClick={(e) => e.stopPropagation()} // ← Prevenir navegación al editar
               />
               <textarea
                 value={editValues.description}
                 onChange={(e) => setEditValues({ ...editValues, description: e.target.value })}
                 className="text-gray-600 text-sm border-b border-gray-300 focus:outline-none focus:ring-1 focus:ring-lime-500 resize-none truncate line-clamp-3"
+                onClick={(e) => e.stopPropagation()} // ← Prevenir navegación al editar
               />
               <div className="grid grid-cols-2 gap-2">
                 <input
@@ -224,12 +247,14 @@ const ProductCard: React.FC<Props> = ({ product, onDelete, onUpdate, onAddToCart
                   onChange={(e) => setEditValues({ ...editValues, rating: e.target.value })}
                   className="text-sm border-b border-gray-300 focus:outline-none focus:ring-1 focus:ring-lime-500"
                   placeholder="Rating"
+                  onClick={(e) => e.stopPropagation()} // ← Prevenir navegación al editar
                 />
                 <input
                   value={editValues.sale}
                   onChange={(e) => setEditValues({ ...editValues, sale: e.target.value })}
                   className="text-sm border-b border-gray-300 focus:outline-none focus:ring-1 focus:ring-lime-500"
                   placeholder="Descuento %"
+                  onClick={(e) => e.stopPropagation()} // ← Prevenir navegación al editar
                 />
               </div>
               <input
@@ -237,21 +262,29 @@ const ProductCard: React.FC<Props> = ({ product, onDelete, onUpdate, onAddToCart
                 onChange={(e) => setEditValues({ ...editValues, publisher: e.target.value })}
                 className="text-sm border-b border-gray-300 focus:outline-none focus:ring-1 focus:ring-lime-500"
                 placeholder="Vendedor"
+                onClick={(e) => e.stopPropagation()} // ← Prevenir navegación al editar
               />
               <input
                 value={editValues.price}
                 onChange={(e) => setEditValues({ ...editValues, price: e.target.value })}
                 className="text-2xl font-bold text-lime-600 border-b border-gray-300 focus:outline-none focus:ring-1 focus:ring-lime-500"
+                onClick={(e) => e.stopPropagation()} // ← Prevenir navegación al editar
               />
               <div className="mt-2 flex gap-2">
                 <button
-                  onClick={handleSave}
+                  onClick={(e) => {
+                    e.stopPropagation(); // ← Prevenir navegación al guardar
+                    handleSave();
+                  }}
                   className="bg-lime-500 text-white px-4 py-1 rounded hover:bg-lime-600 flex items-center"
                 >
                   <Check size={16} className="inline mr-1" /> Guardar
                 </button>
                 <button
-                  onClick={handleCancel}
+                  onClick={(e) => {
+                    e.stopPropagation(); // ← Prevenir navegación al cancelar
+                    handleCancel();
+                  }}
                   className="bg-gray-300 text-gray-700 px-4 py-1 rounded hover:bg-gray-400 flex items-center"
                 >
                   <CancelIcon size={16} className="inline mr-1" /> Cancelar
