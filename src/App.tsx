@@ -1,34 +1,28 @@
-import NavBar from "./components/layout/NavBar";
-import Content from "./components/content/Content";
-import About from "./components/layout/About";
-import CartPage from "./components/content/CartPage";
-import ProductDetail from "./components/content/ProductDetail";
-import { useProducts } from "./hooks/useProducts";
-import { useSearch } from "./hooks/useSearch";
-import { Routes, Route } from "react-router-dom";
+import { NavBar } from './features/layout';
+import { AppRouter } from './app/router';
+import { Toast } from './shared/ui';
+import { useCartStore } from './app/store/cartStore';
+import { useEffect } from 'react';
+import { useToast } from './shared/lib/useToast'; // Importación corregida
 
 export default function App() {
-  const { products } = useProducts();
-  const { term, setTerm, filtered } = useSearch(products);
+  const { toast, hideToast } = useToast(); // Removí showToast que no se usa
+  const { loadCart } = useCartStore();
+
+  // Cargar carrito al iniciar la app
+  useEffect(() => {
+    loadCart();
+  }, [loadCart]);
 
   return (
     <div className="flex flex-col h-screen bg-lime-100 overflow-y-auto">
-      <NavBar setTerm={setTerm} />
+      <NavBar setTerm={() => {}} /> {/* setTerm se manejará en HomePage */}
       <div className="flex-1">
-        <Routes>
-          <Route 
-            path="/" 
-            element={
-              <>
-                <Content filteredProducts={filtered} />
-                <About />
-              </>
-            } 
-          />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/product/:id" element={<ProductDetail />} /> {/* ← NUEVA RUTA */}
-        </Routes>
+        <AppRouter />
       </div>
+      {toast && (
+        <Toast message={toast.message} type={toast.type} onClose={hideToast} />
+      )}
     </div>
   );
 }
