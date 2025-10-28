@@ -2,11 +2,13 @@
 // Components
 export { ProductCard } from "./components/ProductCard";
 export { Content } from "./components/Content";
-export { AddButton } from "./components/AddButton"; // ← NUEVO
-export { AddForm } from "./components/AddForm";     // ← NUEVO
+export { AddButton } from "./components/AddButton";
+export { AddForm } from "./components/AddForm";
 
 // Pages
-export { ProductDetailPage } from "./components/ProductDetailPage";
+export { ProductDetailPage } from "./components/ProductDetailPage"; // ← Ahora apunta al nuevo
+
+// ... resto del código igual
 
 // Hooks
 export { useProducts } from "./hooks/useProducts";
@@ -17,8 +19,8 @@ export { cloudinaryService } from "./services/cloudinaryService";
 
 // Types
 export type {
-  Product,
-  Category,
-  Review,
-  ProductFormData, // ← NUEVO
+	Product,
+	Category,
+	Review,
+	ProductFormData,
 } from "./types/product.types";

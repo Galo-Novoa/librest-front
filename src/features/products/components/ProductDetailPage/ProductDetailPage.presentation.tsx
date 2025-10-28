@@ -1,101 +1,61 @@
-// ./src/features/products/components/ProductDetailPage.tsx
-import { useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+// ./src/features/products/components/ProductDetailPage/ProductDetailPage.presentation.tsx
+import { Link } from 'react-router-dom';
 import { ArrowLeft, Star, ShoppingCart, Heart, Share2, Truck, Shield, RotateCcw } from 'lucide-react';
-import { useProducts } from '../hooks/useProducts';
-import { useCartStore } from '../../../app/store/cartStore';
-import { useToast } from '../../../shared/lib/useToast';
-import { LoadingSpinner, ErrorMessage } from '../../../shared/ui';
-import { Toast } from '../../../shared/ui/Toast';
+import { Toast } from '../../../../shared/ui';
+import type { Product } from '../../types/product.types';
+import type { JSX } from 'react';
 
-export const ProductDetailPage = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const { products, loading, error, retry } = useProducts();
-  const { addToCart } = useCartStore();
-  const { toast, showToast, hideToast } = useToast();
-  const [selectedImage, setSelectedImage] = useState(0);
-  const [quantity, setQuantity] = useState(1);
+interface ProductDetailPagePresentationProps {
+  product: Product;
+  safeRating: number;
+  safePrice: number;
+  safeSale: number;
+  safePublisher: string;
+  safeName: string;
+  safeDescription: string;
+  toast: any;
+  selectedImage: number;
+  quantity: number;
+  productImages: { id: string; url: string }[];
+  discountedPrice: number;
+  onHideToast: () => void;
+  onNavigateBack: () => void;
+  onSetSelectedImage: (index: number) => void;
+  onSetQuantity: (quantity: number) => void;
+  onAddToCart: () => void;
+  onBuyNow: () => void;
+  renderStars: (rating?: number) => JSX.Element[];
+  formatPrice: (price?: number) => string;
+  formatDate: (dateString: string) => string;
+}
 
-  const product = products.find(p => p.id === Number(id));
-
-  if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error} onRetry={retry} />;
-  if (!product) {
-    return (
-      <div className="flex flex-col items-center justify-center h-96">
-        <h2 className="text-2xl font-bold text-gray-600 mb-4">Producto no encontrado</h2>
-        <Link 
-          to="/"
-          className="bg-lime-500 text-white px-6 py-3 rounded-lg hover:bg-lime-600 transition-colors"
-        >
-          Volver a la tienda
-        </Link>
-      </div>
-    );
-  }
-
-  const safeRating = product.rating || 0;
-  const safePrice = product.price || 0;
-  const safeSale = product.sale || 0;
-  const safePublisher = product.publisher || "admin";
-  const safeName = product.name || "Producto sin nombre";
-  const safeDescription = product.description || "Sin descripción disponible";
-
-  const handleAddToCart = async () => {
-    try {
-      for (let i = 0; i < quantity; i++) {
-        await addToCart(product.id);
-      }
-      showToast(`${quantity} producto(s) agregado(s) al carrito`, 'success');
-    } catch {
-      showToast('Error al agregar al carrito', 'error');
-    }
-  };
-
-  const handleBuyNow = async () => {
-    await handleAddToCart();
-    navigate('/cart');
-  };
-
-  const renderStars = (rating: number) => {
-    const safeRating = rating || 0;
-    return [...Array(5)].map((_, i) => (
-      <Star
-        key={i}
-        size={20}
-        className={i < Math.floor(safeRating) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}
-      />
-    ));
-  };
-
-  const calculateDiscountedPrice = (price: number, sale: number) => {
-    const safePrice = price || 0;
-    const safeSale = sale || 0;
-    return safePrice * (1 - safeSale / 100);
-  };
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("es-AR").format(price || 0);
-  };
-
-  const formatDate = (dateString: string) => {
-    try {
-      return new Date(dateString).toLocaleDateString('es-AR');
-    } catch {
-      return "Fecha no disponible";
-    }
-  };
-
-  const discountedPrice = calculateDiscountedPrice(safePrice, safeSale);
-
-  // Array de imágenes (en un caso real podrías tener múltiples imágenes)
-  const productImages = [product.image, product.image, product.image]; // Placeholder
-
+export const ProductDetailPagePresentation = ({
+  product,
+  safeRating,
+  safePrice,
+  safeSale,
+  safePublisher,
+  safeName,
+  safeDescription,
+  toast,
+  selectedImage,
+  quantity,
+  productImages,
+  discountedPrice,
+  onHideToast,
+  onNavigateBack,
+  onSetSelectedImage,
+  onSetQuantity,
+  onAddToCart,
+  onBuyNow,
+  renderStars,
+  formatPrice,
+  formatDate,
+}: ProductDetailPagePresentationProps) => {
   return (
     <div className="min-h-screen bg-lime-50">
       {toast && (
-        <Toast message={toast.message} type={toast.type} onClose={hideToast} />
+        <Toast message={toast.message} type={toast.type} onClose={onHideToast} />
       )}
       
       {/* Breadcrumb */}
@@ -118,7 +78,7 @@ export const ProductDetailPage = () => {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Botón volver */}
         <button
-          onClick={() => navigate(-1)}
+          onClick={onNavigateBack}
           className="flex items-center gap-2 text-lime-600 hover:text-lime-700 mb-6 transition-colors"
         >
           <ArrowLeft size={20} />
@@ -130,7 +90,7 @@ export const ProductDetailPage = () => {
           <div className="space-y-4">
             <div className="bg-white rounded-2xl p-4 shadow-lg">
               <img
-                src={productImages[selectedImage]}
+                src={productImages[selectedImage]?.url || ''}
                 alt={safeName}
                 className="w-full h-96 object-cover rounded-lg"
               />
@@ -138,14 +98,14 @@ export const ProductDetailPage = () => {
             <div className="flex gap-2 overflow-x-auto">
               {productImages.map((img, index) => (
                 <button
-                  key={index}
-                  onClick={() => setSelectedImage(index)}
+                  key={img.id}
+                  onClick={() => onSetSelectedImage(index)}
                   className={`flex-shrink-0 w-20 h-20 rounded-lg border-2 overflow-hidden ${
                     selectedImage === index ? 'border-lime-500' : 'border-gray-200'
                   }`}
                 >
                   <img
-                    src={img}
+                    src={img.url}
                     alt={`Vista ${index + 1} de ${safeName}`}
                     className="w-full h-full object-cover"
                   />
@@ -206,18 +166,28 @@ export const ProductDetailPage = () => {
               {/* Cantidad y acciones */}
               <div className="mt-6 space-y-4">
                 <div className="flex items-center gap-4">
-                  <label className="text-gray-700 font-medium">Cantidad:</label>
+                  <label htmlFor="quantity-selector" className="text-gray-700 font-medium">
+                    Cantidad:
+                  </label>
                   <div className="flex items-center border rounded-lg">
                     <button
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      onClick={() => onSetQuantity(Math.max(1, quantity - 1))}
                       className="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100"
+                      aria-label="Reducir cantidad"
                     >
                       -
                     </button>
-                    <span className="w-12 text-center font-medium">{quantity}</span>
+                    <span 
+                      id="quantity-selector"
+                      className="w-12 text-center font-medium"
+                      aria-live="polite"
+                    >
+                      {quantity}
+                    </span>
                     <button
-                      onClick={() => setQuantity(quantity + 1)}
+                      onClick={() => onSetQuantity(quantity + 1)}
                       className="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100"
+                      aria-label="Aumentar cantidad"
                     >
                       +
                     </button>
@@ -226,14 +196,14 @@ export const ProductDetailPage = () => {
 
                 <div className="flex gap-3">
                   <button
-                    onClick={handleAddToCart}
+                    onClick={onAddToCart}
                     className="flex-1 bg-lime-500 text-white py-4 px-6 rounded-lg hover:bg-lime-600 transition-colors font-semibold text-lg flex items-center justify-center gap-2"
                   >
                     <ShoppingCart size={24} />
                     Agregar al carrito
                   </button>
                   <button
-                    onClick={handleBuyNow}
+                    onClick={onBuyNow}
                     className="flex-1 bg-orange-500 text-white py-4 px-6 rounded-lg hover:bg-orange-600 transition-colors font-semibold text-lg"
                   >
                     Comprar ahora
