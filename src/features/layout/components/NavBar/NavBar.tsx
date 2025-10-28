@@ -1,12 +1,11 @@
 import { ProfileMenu } from '../ProfileMenu';
 import { CartIcon } from '../../../../features/cart';
 import { SearchBar } from '../../../../features/search';
+import { useSearchStore } from '../../../../app/store';
 
-interface NavBarProps {
-  setTerm: (value: string) => void;
-}
+export const NavBar = () => {
+  const { setSearchTerm } = useSearchStore();
 
-export const NavBar = ({ setTerm }: NavBarProps) => {
   return (
     <nav className="text-white font-bold whitespace-nowrap">
       <div className="bg-lime-400 flex items-center h-16 pr-4">
@@ -15,7 +14,7 @@ export const NavBar = ({ setTerm }: NavBarProps) => {
           <h1 className="text-5xl">MERCADO LIBREST</h1>
         </div>
         <div className="flex-1 ml-4">
-          <SearchBar onSearch={setTerm} />
+          <SearchBar onSearch={setSearchTerm} />
         </div>
         <div className="ml-auto flex items-center space-x-5">
           <CartIcon />

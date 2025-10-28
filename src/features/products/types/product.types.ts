@@ -1,3 +1,4 @@
+// ./src/features/products/types/product.types.ts
 export interface Product {
   id: number;
   name: string;
@@ -26,7 +27,6 @@ export interface Review {
   comment: string;
   date: string;
 }
-
 export interface ProductFormData {
   name: string;
   price: number | '';

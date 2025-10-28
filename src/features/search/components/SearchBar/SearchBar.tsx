@@ -19,13 +19,13 @@ export const SearchBar = ({ onSearch }: SearchBarProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex items-center">
+    <form onSubmit={handleSubmit} className="flex text-xl items-center">
       <input
         type="text"
         placeholder="Buscar productos por nombre o descripción..."
         value={inputValue}
         onChange={handleInputChange}
-        className="px-4 py-3 w-[45vw] rounded-l-2xl h-12 outline-none placeholder-lime-600 bg-transparent focus:outline-none focus:ring focus:ring-lime-400 bg-white placeholder:text-xl text-black"
+        className="px-4 py-3 w-[45vw] rounded-l-2xl h-12 outline-none placeholder-lime-600 bg-transparent focus:outline-none focus:ring focus:ring-lime-400 bg-white text-black"
       />
       <button 
         type="submit" 
