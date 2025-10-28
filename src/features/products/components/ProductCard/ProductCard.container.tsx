@@ -40,19 +40,19 @@ export const ProductCardContainer: React.FC<ProductCardContainerProps> = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setEditValues((prev) => ({ ...prev, image: file }));
+    setEditValues((prev) => ({ ...prev, image: file as any }));
     setPreviewImage(URL.createObjectURL(file));
     setImageError(false);
   };
 
   const handleSave = async () => {
-    const numericPrice = Number.parseFloat(editValues.price.replace(/[$\s]/g, "")) || 0;
+    const numericPrice = Number.parseFloat(editValues.price.replaceAll(/[$\s]/g, "")) || 0;
     const numericRating = Number.parseFloat(editValues.rating) || 0;
     const numericSale = Number.parseInt(editValues.sale) || 0;
     
     let imageUrl = product.image || "";
 
-    if (editValues.image instanceof File) {
+    if (editValues.image && typeof editValues.image !== 'string') {
       try {
         imageUrl = await cloudinaryService.uploadImage(editValues.image);
       } catch (error) {
@@ -87,10 +87,8 @@ export const ProductCardContainer: React.FC<ProductCardContainerProps> = ({
     setIsEditing(false);
   };
 
-  const calculateDiscountedPrice = (price: number, sale: number) => {
-    const safePrice = price || 0;
-    const safeSale = sale || 0;
-    return safePrice * (1 - safeSale / 100);
+  const calculateDiscountedPrice = (price: number = 0, sale: number = 0) => {
+    return price * (1 - sale / 100);
   };
 
   const formatPrice = (price: number) => {

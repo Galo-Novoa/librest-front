@@ -1,3 +1,6 @@
+// src/types/zustand.d.ts
+import 'zustand';
+
 declare module 'zustand' {
-  export function create<T>(fn: (set: any, get: any) => T): T;
+  // Esta declaración vacía es suficiente para TypeScript
 }

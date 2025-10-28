@@ -5,7 +5,7 @@ import { useSearch } from "../../features/search";
 
 export const HomePage = () => {
 	const { products } = useProducts();
-	const { setTerm, filtered } = useSearch(products); // Removí 'term' que no se usa
+	const { filtered } = useSearch(products); // Removí 'term' que no se usa
 
 	return (
 		<>

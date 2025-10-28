@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ShoppingCart, Trash2, Plus, Minus, ArrowLeft, Loader2 } from 'lucide-react';
-import { useCartStore } from '../../../../app/store/cartStore';
-import { ErrorMessage, LoadingSpinner } from '../../../../shared/ui';
+import { useCartStore } from '../../../app/store/cartStore';
+import { ErrorMessage } from '../../../shared/ui/ErrorMessage';
 
 export const CartPage = () => {
   const { 
