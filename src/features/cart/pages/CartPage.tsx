@@ -1,7 +1,8 @@
-import { Link } from 'react-router-dom';
-import { ShoppingCart, Trash2, Plus, Minus, ArrowLeft, Loader2 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ShoppingCart, Trash2, Plus, Minus, ArrowLeft } from 'lucide-react';
 import { useCartStore } from '../../../app/store/cartStore';
 import { ErrorMessage } from '../../../shared/ui/ErrorMessage';
+import { useToast } from '../../../shared/lib/useToast';
 
 export const CartPage = () => {
   const { 
@@ -15,17 +16,16 @@ export const CartPage = () => {
     retry 
   } = useCartStore();
 
-  const handleCheckout = () => {
-    alert('¡Funcionalidad de checkout en desarrollo!');
-  };
+const navigate = useNavigate();
+const { showToast } = useToast();
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <Loader2 className="animate-spin text-lime-600" size={48} />
-      </div>
-    );
+const handleCheckout = () => {
+  if (cart.length === 0) {
+    showToast('El carrito está vacío', 'error');
+    return;
   }
+  navigate('/checkout');
+};
 
   if (error) {
     return (

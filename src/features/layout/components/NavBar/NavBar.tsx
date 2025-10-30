@@ -2,6 +2,7 @@ import { ProfileMenu } from '../ProfileMenu';
 import { CartIcon } from '../../../../features/cart';
 import { SearchBar } from '../../../../features/search';
 import { useSearchStore } from '../../../../app/store';
+import { BalanceWidget } from '../../../../features/cart/components/BalanceWidget/BalanceWidget';
 
 export const NavBar = () => {
   const { setSearchTerm } = useSearchStore();
@@ -17,6 +18,7 @@ export const NavBar = () => {
           <SearchBar onSearch={setSearchTerm} />
         </div>
         <div className="ml-auto flex items-center space-x-5">
+          <BalanceWidget />
           <CartIcon />
           <ProfileMenu avatarUrl="/user.jpg" onLogout={() => {}} />
         </div>
